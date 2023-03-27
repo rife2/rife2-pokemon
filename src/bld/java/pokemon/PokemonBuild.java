@@ -3,6 +3,7 @@ package pokemon;
 import rife.bld.BuildCommand;
 import rife.bld.CommandHelp;
 import rife.bld.WebProject;
+import rife.bld.operations.exceptions.ExitStatusException;
 
 import java.io.IOException;
 import java.util.List;
@@ -51,8 +52,8 @@ public class PokemonBuild extends WebProject {
     }
 
     @BuildCommand(help = TailwindWatchHelp.class)
-    public void tailwind_watch() throws IOException, InterruptedException {
-        System.exit(new ProcessBuilder(
+    public void tailwind_watch() throws IOException, InterruptedException, ExitStatusException {
+        int status = new ProcessBuilder(
                 "npx",
                 "tailwindcss",
                 "-i",
@@ -63,12 +64,16 @@ public class PokemonBuild extends WebProject {
         )
                 .inheritIO()
                 .start()
-                .waitFor());
+                .waitFor();
+
+        if (status != 0) {
+            throw new ExitStatusException(status);
+        }
     }
 
     @BuildCommand(help = TailwindHelp.class)
-    public void tailwind() throws IOException, InterruptedException {
-        System.exit(new ProcessBuilder(
+    public void tailwind() throws IOException, InterruptedException, ExitStatusException {
+        int status = new ProcessBuilder(
                 "npx",
                 "tailwindcss",
                 "-i",
@@ -78,7 +83,10 @@ public class PokemonBuild extends WebProject {
         )
                 .inheritIO()
                 .start()
-                .waitFor());
+                .waitFor();
+        if (status != 0) {
+            throw new ExitStatusException(status);
+        }
     }
 
     public static void main(String[] args) {
