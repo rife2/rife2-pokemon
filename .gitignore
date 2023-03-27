@@ -57,4 +57,5 @@ atlassian-ide-plugin.xml
 # Generated Tailwind
 src/main/css/tailwind.css
 
-# Package
+# Node Modules
+node_modules/
