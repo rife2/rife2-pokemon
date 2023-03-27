@@ -55,7 +55,7 @@ atlassian-ide-plugin.xml
 .idea/httpRequests
 
 # Generated Tailwind
-src/main/css/tailwind.css
+src/main/webapp/css/tailwind.css
 
 # Node Modules
 node_modules/
