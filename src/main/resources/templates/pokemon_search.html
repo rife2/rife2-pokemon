@@ -1,22 +1,22 @@
 <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 p-6">
     <!--v pokemon_list /-->
     <!--b pokemon-->
-    <li class="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow">
+    <li data-testid="pokemon_list_item" class="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow">
         <div class="flex w-full items-center justify-between space-x-6 p-6">
             <div class="flex-1 truncate">
                 <div class="flex items-center space-x-3">
-                    <h3 class="truncate text-sm font-medium text-gray-900">
+                    <h3 data-testid="pokemon_name" class="truncate text-sm font-medium text-gray-900">
                         <!--v pokemon_name /-->
                     </h3>
-                    <span class="inline-block flex-shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+                    <span data-testid="pokemon_number" class="inline-block flex-shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
                         <!--v pokemon_number /-->
                     </span>
                 </div>
-                <p class="mt-1 truncate text-sm text-gray-500">
+                <p data-testid="pokemon_type" class="mt-1 truncate text-sm text-gray-500">
                     <!--v pokemon_type /-->
                 </p>
             </div>
-            <img class="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300" src="{{v pokemon_image /}}" alt="">
+            <img class="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300" src="{{v pokemon_image /}}" alt="" />
         </div>
     </li>
     <!--/b-->
