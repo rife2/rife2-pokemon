@@ -6,6 +6,7 @@ import rife.engine.*;
 import rife.resources.ResourceFinderClasspath;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -18,9 +19,7 @@ public class PokemonSite extends Site {
     public void setup() {
         List<Pokemon> pokemon;
         try (var stream = ResourceFinderClasspath.instance().getResource("/pokemon.json").openStream()) {
-            var pokemonString = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
-            var pokemonJson = Json.readString(pokemonString);
-
+            var pokemonJson = Json.read(new InputStreamReader(stream));
             pokemon = JsonDecoder.array(pokemonJson, Pokemon::fromJson);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
