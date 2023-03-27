@@ -8,7 +8,7 @@
     <div class="p-6">
         <label for="email" class="block text-sm font-medium text-gray-700">Name</label>
         <div class="mt-1">
-            <input hx-get="{{v route:pokemon_list /}}"
+            <input hx-get="{{v route:pokemon_search /}}"
                    hx-target="#pokemon-list"
                    hx-swap="innerHTML"
                    hx-trigger="keyup changed delay:250ms"
@@ -21,7 +21,7 @@
 </div>
 
 <div id="pokemon-list">
-    <!--i pokemon_list /-->
+    <!--i pokemon_search /-->
 </div>
 </body>
 </html>
