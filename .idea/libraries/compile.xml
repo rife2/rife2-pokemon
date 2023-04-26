@@ -2,6 +2,7 @@
   <library name="compile">
     <CLASSES>
       <root url="file://$PROJECT_DIR$/lib/compile" />
+      <root url="file://$PROJECT_DIR$/src/main/resources" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
