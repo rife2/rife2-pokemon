@@ -1,32 +1,27 @@
 package pokemon;
 
-import dev.mccue.json.Json;
-import dev.mccue.json.JsonDecoder;
 import rife.engine.*;
+import rife.engine.exceptions.EngineException;
+import rife.json.Json;
 import rife.resources.ResourceFinderClasspath;
+import rife.resources.exceptions.ResourceFinderErrorException;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class PokemonSite extends Site {
-    Route pokemon_index;
-    Route pokemon_search;
+    final List<Pokemon> pokemon = loadPokemon();
 
-    @Override
-    public void setup() {
-        List<Pokemon> pokemon;
-        try (var stream = ResourceFinderClasspath.instance().getResource("/pokemon.json").openStream()) {
-            var pokemonJson = Json.read(new InputStreamReader(stream));
-            pokemon = JsonDecoder.array(pokemonJson, Pokemon::fromJson);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+    // public so the template can reach it through the route: tag
+    public final Route search = get("/", () -> new PokemonSearch(pokemon));
+
+    static List<Pokemon> loadPokemon() {
+        try {
+            // the Nidoran names carry ♀ and ♂, the platform default isn't always UTF-8
+            var json = ResourceFinderClasspath.instance().getContent("pokemon.json", "UTF-8");
+            return List.copyOf(Json.toBeanList(Json.parseArray(json), Pokemon.class));
+        } catch (ResourceFinderErrorException e) {
+            throw new EngineException(e);
         }
-
-        pokemon_index = get("/", () -> new PokemonIndex(pokemon));
-        pokemon_search = get("/pokemon_search", () -> new PokemonSearch(pokemon));
     }
 
     public static void main(String[] args) {

@@ -1,12 +1,12 @@
 package pokemon;
 
 import rife.bld.BuildCommand;
-import rife.bld.CommandHelp;
 import rife.bld.WebProject;
 import rife.bld.operations.exceptions.ExitStatusException;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static rife.bld.dependencies.Repository.*;
 import static rife.bld.dependencies.Scope.*;
@@ -18,61 +18,51 @@ public class PokemonBuild extends WebProject {
         name = "Pokemon";
         mainClass = "pokemon.PokemonSite";
         uberJarMainClass = "pokemon.PokemonSiteUber";
-        version = version(0,1,0);
+        version = version(2,0,0);
 
         downloadSources = true;
         autoDownloadPurge = true;
+        javaRelease = 17;
 
-        repositories = List.of(MAVEN_CENTRAL, RIFE2_RELEASES);
+        repositories = List.of(MAVEN_CENTRAL);
         scope(compile)
-            .include(dependency("com.uwyn.rife2", "rife2", version(1,9,1)))
-            .include(dependency("dev.mccue", "json", version("2024.11.20")));
+            .include(dependency("com.uwyn.rife2", "rife2", version(1,10,0)));
         scope(test)
-            .include(dependency("org.jsoup", "jsoup", version(1,18,3)))
-            .include(dependency("org.junit.jupiter", "junit-jupiter", version(5,11,4)))
-            .include(dependency("org.junit.platform", "junit-platform-console-standalone", version(1,11,4)));
+            .include(bom("org.junit", "junit-bom", version(6,1,3)))
+            .include(dependency("org.jsoup", "jsoup", version(1,23,2)))
+            .include(dependency("org.junit.jupiter", "junit-jupiter"))
+            .include(dependency("org.junit.platform", "junit-platform-console-standalone"));
         scope(standalone)
-            .include(dependency("org.eclipse.jetty.ee10", "jetty-ee10", version(12,0,16)))
-            .include(dependency("org.eclipse.jetty.ee10", "jetty-ee10-servlet", version(12,0,16)))
-            .include(dependency("org.slf4j", "slf4j-simple", version(2,0,16)));
+            .include(bom("org.eclipse.jetty.ee10", "jetty-ee10-bom", version(12,1,13)))
+            .include(dependency("org.eclipse.jetty.ee10", "jetty-ee10-servlet"))
+            .include(dependency("org.slf4j", "slf4j-simple", version(2,0,19)));
 
         precompileOperation()
             .templateTypes(HTML);
     }
 
-    @BuildCommand(summary = "Runs the tailwind build in watch mode")
-    public void tailwind_watch() throws Exception {
-        int status = new ProcessBuilder(
-                "npx",
-                "tailwindcss",
-                "-i",
-                "./src/main/css/tailwind.css",
-                "-o",
-                "./src/main/webapp/css/tailwind.css",
-                "--watch"
-        )
-                .inheritIO()
-                .start()
-                .waitFor();
-
-        if (status != 0) {
-            throw new ExitStatusException(status);
-        }
-    }
-
     @BuildCommand(summary = "Runs the tailwind build once")
     public void tailwind() throws Exception {
-        int status = new ProcessBuilder(
-                "npx",
-                "tailwindcss",
-                "-i",
-                "./src/main/css/tailwind.css",
-                "-o",
-                "./src/main/webapp/css/tailwind.css"
-        )
-                .inheritIO()
-                .start()
-                .waitFor();
+        runTailwind();
+    }
+
+    @BuildCommand(value = "tailwind-watch", summary = "Runs the tailwind build in watch mode")
+    public void tailwindWatch() throws Exception {
+        runTailwind("--watch");
+    }
+
+    private void runTailwind(String... options) throws Exception {
+        var command = new ArrayList<String>();
+        // npx is a batch script on Windows, which ProcessBuilder can't launch directly
+        if (System.getProperty("os.name").toLowerCase(Locale.ROOT).startsWith("windows")) {
+            command.addAll(List.of("cmd", "/c"));
+        }
+        command.addAll(List.of("npx", "tailwindcss",
+            "-i", "./src/main/css/tailwind.css",
+            "-o", "./src/main/webapp/css/tailwind.css"));
+        command.addAll(List.of(options));
+
+        var status = new ProcessBuilder(command).inheritIO().start().waitFor();
         if (status != 0) {
             throw new ExitStatusException(status);
         }
