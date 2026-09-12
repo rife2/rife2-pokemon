@@ -54,6 +54,8 @@ the routes in memory without starting a server.
 
 ## Credits
 
+This demo was originally created by [Ethan McCue](https://github.com/bowbahdoe).
+
 The Pokémon data and images come from [serebii.net](https://www.serebii.net/).
 Pokémon is a trademark of Nintendo, Creatures Inc. and GAME FREAK Inc. This
 demo is not affiliated with them.
