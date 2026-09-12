@@ -2,11 +2,10 @@ package pokemon;
 
 import rife.bld.BuildCommand;
 import rife.bld.WebProject;
-import rife.bld.operations.exceptions.ExitStatusException;
+import rife.bld.extension.ExecOperation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static rife.bld.dependencies.Repository.*;
 import static rife.bld.dependencies.Scope.*;
@@ -52,20 +51,22 @@ public class PokemonBuild extends WebProject {
     }
 
     private void runTailwind(String... options) throws Exception {
-        var command = new ArrayList<String>();
-        // npx is a batch script on Windows, which ProcessBuilder can't launch directly
-        if (System.getProperty("os.name").toLowerCase(Locale.ROOT).startsWith("windows")) {
-            command.addAll(List.of("cmd", "/c"));
-        }
-        command.addAll(List.of("npx", "tailwindcss",
+        var command = new ArrayList<>(List.of("npx", "tailwindcss",
             "-i", "./src/main/css/tailwind.css",
             "-o", "./src/main/webapp/css/tailwind.css"));
         command.addAll(List.of(options));
 
-        var status = new ProcessBuilder(command).inheritIO().start().waitFor();
-        if (status != 0) {
-            throw new ExitStatusException(status);
-        }
+        // npx is a batch script on Windows and has to go through cmd
+        var windows = new ArrayList<>(List.of("cmd", "/c"));
+        windows.addAll(command);
+
+        new ExecOperation()
+            .fromProject(this)
+            .onWindows(windows)
+            .onUnix(command)
+            // the watch runs until it's stopped, the 30 second default would kill it
+            .timeout(-1)
+            .execute();
     }
 
     public static void main(String[] args) {
