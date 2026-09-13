@@ -25,7 +25,7 @@ public class PokemonBuild extends WebProject {
 
         repositories = List.of(MAVEN_CENTRAL);
         scope(compile)
-            .include(dependency("com.uwyn.rife2", "rife2", version(1,10,0)));
+            .include(dependency("com.uwyn.rife2", "rife2", version(1,10,1)));
         scope(test)
             .include(bom("org.junit", "junit-bom", version(6,1,3)))
             .include(dependency("org.jsoup", "jsoup", version(1,23,2)))
